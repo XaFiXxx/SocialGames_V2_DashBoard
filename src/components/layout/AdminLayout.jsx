@@ -7,6 +7,9 @@ import {
   LogOut,
   Search,
   ShieldCheck,
+  Gamepad2,
+  Monitor,
+  Tags,
 } from "lucide-react";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 
@@ -25,6 +28,21 @@ const navigation = [
     name: "Posts",
     to: "/posts",
     icon: FileText,
+  },
+  {
+    name: "Jeux",
+    to: "/games",
+    icon: Gamepad2,
+  },
+  {
+    name: "Plateformes",
+    to: "/platforms",
+    icon: Monitor,
+  },
+  {
+    name: "Genres",
+    to: "/genres",
+    icon: Tags,
   },
 ];
 
@@ -129,7 +147,7 @@ export default function AdminLayout() {
                   <Search size={16} />
                   <input
                     type="text"
-                    placeholder="Rechercher un utilisateur, un post..."
+                    placeholder="Rechercher un utilisateur, un post, un jeu..."
                     className="w-full bg-transparent outline-none placeholder:text-[var(--text-secondary)]"
                   />
                 </div>

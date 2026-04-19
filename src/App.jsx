@@ -5,14 +5,11 @@ import AdminLayout from "./components/layout/AdminLayout";
 
 import Login from "./pages/Login";
 import DashboardHome from "./pages/DashboardHome";
-
-function UsersPage() {
-  return <div>Users page</div>;
-}
-
-function PostsPage() {
-  return <div>Posts page</div>;
-}
+import UsersPage from "./pages/UsersPage";
+import PostsPage from "./pages/PostsPage";
+import GamesPage from "./pages/GamesPage";
+import GenresPage from "./pages/GenresPage";
+import PlatformsPage from "./pages/PlatformsPage";
 
 export default function App() {
   return (
@@ -28,6 +25,9 @@ export default function App() {
               <Route path="/" element={<DashboardHome />} />
               <Route path="/users" element={<UsersPage />} />
               <Route path="/posts" element={<PostsPage />} />
+              <Route path="/games" element={<GamesPage />} />
+              <Route path="/platforms" element={<PlatformsPage />} />
+              <Route path="/genres" element={<GenresPage />} />
             </Route>
           </Route>
         </Routes>
