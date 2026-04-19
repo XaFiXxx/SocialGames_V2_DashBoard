@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Users, FileText, MessageSquare, Activity } from "lucide-react";
+import {
+  Users,
+  FileText,
+  MessageSquare,
+  Activity,
+  Gamepad2,
+  Monitor,
+  Tags,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
 
@@ -24,13 +32,30 @@ function StatCard({ icon: Icon, label, value, helper, isLoading }) {
   );
 }
 
+function QuickInfoCard({ title, value, subtitle }) {
+  return (
+    <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-secondary)] p-4">
+      <p className="text-sm text-[var(--text-secondary)]">{title}</p>
+      <p className="mt-2 text-xl font-bold text-[var(--text-main)]">{value}</p>
+      {subtitle && (
+        <p className="mt-1 text-xs text-[var(--text-secondary)]">{subtitle}</p>
+      )}
+    </div>
+  );
+}
+
 export default function DashboardHome() {
   const [stats, setStats] = useState({
     users: 0,
     posts: 0,
     messages: 0,
+    games: 0,
+    platforms: 0,
+    genres: 0,
     new_users_24h: 0,
+    new_posts_24h: 0,
   });
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -41,11 +66,16 @@ export default function DashboardHome() {
         setError("");
 
         const { data } = await api.get("/api/admin/stats");
+
         setStats({
           users: data.users ?? 0,
           posts: data.posts ?? 0,
           messages: data.messages ?? 0,
+          games: data.games ?? 0,
+          platforms: data.platforms ?? 0,
+          genres: data.genres ?? 0,
           new_users_24h: data.new_users_24h ?? 0,
+          new_posts_24h: data.new_posts_24h ?? 0,
         });
       } catch (err) {
         console.error("Erreur chargement stats admin :", err);
@@ -98,6 +128,30 @@ export default function DashboardHome() {
           isLoading={isLoading}
         />
         <StatCard
+          icon={Gamepad2}
+          label="Jeux"
+          value={stats.games}
+          helper="Jeux dans le catalogue"
+          isLoading={isLoading}
+        />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <StatCard
+          icon={Monitor}
+          label="Plateformes"
+          value={stats.platforms}
+          helper="Plateformes disponibles"
+          isLoading={isLoading}
+        />
+        <StatCard
+          icon={Tags}
+          label="Genres"
+          value={stats.genres}
+          helper="Genres enregistrés"
+          isLoading={isLoading}
+        />
+        <StatCard
           icon={Activity}
           label="Nouveaux users 24h"
           value={stats.new_users_24h}
@@ -110,18 +164,33 @@ export default function DashboardHome() {
         <div className="xl:col-span-2 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-card)] p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <h2 className="text-lg font-semibold text-[var(--text-main)]">
-              Activité récente
+              Résumé rapide
             </h2>
           </div>
 
-          <div className="rounded-2xl border border-dashed border-[var(--border-color)] bg-[var(--bg-secondary)] px-5 py-8 text-center">
-            <p className="text-sm font-medium text-[var(--text-main)]">
-              Aucun flux d’activité disponible pour le moment
-            </p>
-            <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              Cette section sera branchée lorsque les données d’activité admin
-              seront disponibles côté backend.
-            </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <QuickInfoCard
+              title="Utilisateurs inscrits aujourd’hui"
+              value={isLoading ? "..." : stats.new_users_24h}
+              subtitle="Sur les dernières 24 heures"
+            />
+            <QuickInfoCard
+              title="Posts créés aujourd’hui"
+              value={isLoading ? "..." : stats.new_posts_24h}
+              subtitle="Sur les dernières 24 heures"
+            />
+            <QuickInfoCard
+              title="Jeux référencés"
+              value={isLoading ? "..." : stats.games}
+              subtitle="Catalogue administrable"
+            />
+            <QuickInfoCard
+              title="Taxonomie disponible"
+              value={
+                isLoading ? "..." : `${stats.platforms} plateformes / ${stats.genres} genres`
+              }
+              subtitle="Base utilisée dans l’application"
+            />
           </div>
         </div>
 
@@ -132,8 +201,29 @@ export default function DashboardHome() {
 
           <div className="space-y-3">
             <Link
-              to="/users"
+              to="/games"
               className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--primary)] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[var(--primary-hover)]"
+            >
+              Gérer les jeux
+            </Link>
+
+            <Link
+              to="/platforms"
+              className="inline-flex w-full items-center justify-center rounded-2xl border border-[var(--border-color)] px-4 py-3 text-sm font-medium text-[var(--text-main)] transition hover:bg-[var(--bg-secondary)]"
+            >
+              Gérer les plateformes
+            </Link>
+
+            <Link
+              to="/genres"
+              className="inline-flex w-full items-center justify-center rounded-2xl border border-[var(--border-color)] px-4 py-3 text-sm font-medium text-[var(--text-main)] transition hover:bg-[var(--bg-secondary)]"
+            >
+              Gérer les genres
+            </Link>
+
+            <Link
+              to="/users"
+              className="inline-flex w-full items-center justify-center rounded-2xl border border-[var(--border-color)] px-4 py-3 text-sm font-medium text-[var(--text-main)] transition hover:bg-[var(--bg-secondary)]"
             >
               Voir les utilisateurs
             </Link>
@@ -144,14 +234,6 @@ export default function DashboardHome() {
             >
               Gérer les posts
             </Link>
-
-            <button
-              type="button"
-              disabled
-              className="w-full cursor-not-allowed rounded-2xl border border-[var(--border-color)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] opacity-70"
-            >
-              Signalements bientôt
-            </button>
           </div>
         </div>
       </div>
