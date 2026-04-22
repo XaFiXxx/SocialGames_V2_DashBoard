@@ -47,7 +47,7 @@ export function AdminAuthProvider({ children }) {
   const login = async (payload) => {
     await api.get("/sanctum/csrf-cookie");
 
-    const response = await api.post("/api/login", payload);
+    const response = await api.post("/login", payload);
     const loggedUser = response.data?.user ?? null;
 
     if (!loggedUser) {
@@ -59,7 +59,7 @@ export function AdminAuthProvider({ children }) {
 
     if (!isAdminUser(loggedUser)) {
       try {
-        await api.post("/api/logout");
+        await api.post("/logout");
       } catch (error) {
         console.error("Erreur logout après refus admin :", error);
       }
@@ -79,7 +79,7 @@ export function AdminAuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      await api.post("/api/logout");
+      await api.post("/logout");
     } finally {
       setUser(null);
       setIsAdminSession(false);
